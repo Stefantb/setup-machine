@@ -70,7 +70,7 @@ install_basic_packages() {
 install_starship() {
     func_begin "Installing Starship"
 
-    curl -sS https://starship.rs/install.sh | sh -- -y
+    curl -sS https://starship.rs/install.sh | sh -s -- --yes
 
     pushd ~/dotfiles
     stow -v starship
@@ -342,12 +342,6 @@ install_vivaldi() {
 install_bob() {
     func_begin "Installing Bob"
 
-    # Ask the user if they want to install Bob
-    read -p "Do you want to install Bob? (y/n): " install_bob_choice
-    if [[ "$install_bob_choice" != "y" && "$install_bob_choice" != "Y" ]]; then
-        echo "Skipping Bob installation."
-        return
-    fi
 
     # Install build tools where they get mounted to the container
     pushd ~/dev/local-tools
@@ -373,7 +367,7 @@ install_bob() {
     popd # local-tools
 
     pushd ~/dotfiles
-    stow -v bob
+    stow -v bob-work
 
     func_done
 }
@@ -393,7 +387,12 @@ install_uv_and_pipx
 install_vpn
 install_notes
 install_vivaldi
-install_bob
+
+# Ask the user if they want to install Bob
+read -p "Do you want to install Bob? (y/n): " install_bob_choice
+if [[ "$install_bob_choice" == "y" || "$install_bob_choice" == "Y" ]]; then
+    install_bob
+fi
 
 echo "All installations are complete!"
 echo "Change hostname by running: sudo hostnamectl set-hostname <new-hostname>"
