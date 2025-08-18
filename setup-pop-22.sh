@@ -78,7 +78,6 @@ install_starship() {
 }
 
 backup_bash_files() {
-    # Install bash dotfiles
     pushd ~
     if [[ -f .bashrc ]]; then
         echo "Backing up existing .bashrc"
@@ -96,6 +95,7 @@ backup_bash_files() {
         echo "Backing up existing .bash_logout"
         mv .bash_logout .bash_logout.bak
     fi
+    popd
 }
 
 
@@ -116,6 +116,8 @@ install_dotfiles() {
 
     backup_bash_files
     stow -v bash
+
+    popd # dotfiles
     func_done
 }
 
@@ -125,9 +127,11 @@ install_notes() {
 
     pushd ~/dev/
     git clone git@github.com:Stefantb/notes.git
+    popd
 
     pushd ~/dotfiles
     ./setup-notes-git-sync.sh
+    popd 
     func_done
 }
 
@@ -138,20 +142,29 @@ install_fzf() {
     pushd ~
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
     ~/.fzf/install --all
+    popd
+
     mkdir -p dev/local-tools/
     pushd dev/local-tools
     git clone https://github.com/urbainvaes/fzf-marks.git
+    popd
     func_done
 }
 
+install_nerdfonts() {
+    func_begin "Installing Nerd Fonts"
+
+    wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/JetBrainsMono.zip
+    pushd ~/.local/share/fonts && unzip JetBrainsMono.zip && rm JetBrainsMono.zip && fc-cache -fv
+    func_done
+}
 
 install_neovim() {
     func_begin "Installing Neovim"
 
-    pushd ~
-    mkdir -p dev/local-tools
+    mkdir -p ~/dev/local-tools
 
-    pushd dev/local-tools
+    pushd ~/dev/local-tools
     git clone https://github.com/neovim/neovim.git --branch release-0.10
 
     pushd neovim
@@ -170,7 +183,6 @@ install_neovim() {
     pip install neovim
     pip install pynvim
     popd # .virtualenvs
-
 
     # Install nvm and node 18.18.2
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
@@ -198,6 +210,7 @@ install_albert() {
 
     pushd ~/dotfiles
     stow -v albert
+    popd
     func_done
 }
 
@@ -205,17 +218,17 @@ install_albert() {
 install_smartgit() {
     func_begin "Installing SmartGit"
 
-    pushd ~
-    mkdir -p Programs/smartgit
-    pushd Programs/smartgit
+    mkdir -p ~/Programs/smartgit
+    pushd ~/Programs/smartgit
     filename=smartgit-linux-24_1_4
     wget https://download.smartgit.dev/smartgit/${filename}.tar.gz
     mkdir ${filename}
     tar -xvf ${filename}.tar.gz -C ${filename}
     rm ${filename}.tar.gz
-
     pushd ${filename}/smartgit/bin
     ./add-menuitem.sh
+    popd # smartgit/bin
+    popd # ~/Programs/smartgit/
     func_done
 }
 
@@ -229,6 +242,11 @@ install_awesome() {
     git clone git@github.com:Stefantb/awesome-gnome.git
     pushd awesome-gnome
     sudo make install
+    popd # awesome-gnome
+    popd # local-tools
+
+    pushd ~/dotfiles
+    stow -v awesome
 
     gsettings set org.gnome.gnome-flashback desktop false
     gsettings set org.gnome.gnome-flashback root-background true
@@ -314,6 +332,7 @@ install_dotfiles
 install_bash_dotfiles
 install_starship
 install_fzf
+install_nerdfonts
 install_neovim
 install_albert
 install_smartgit
