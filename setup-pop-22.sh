@@ -70,7 +70,7 @@ install_basic_packages() {
 install_starship() {
     func_begin "Installing Starship"
 
-    curl -sS https://starship.rs/install.sh | sh
+    curl -sS https://starship.rs/install.sh | sh -- -y
 
     pushd ~/dotfiles
     stow -v starship
@@ -107,6 +107,7 @@ install_dotfiles() {
 
     # Creating directories prevents stow from taking ownership, and thus clashes.
     mkdir -p .local/bin
+    mkdir -p .config/bash/bashrc.d
 
     pushd dotfiles
     # Use stow to symlink the dotfiles
@@ -327,6 +328,56 @@ setup_git() {
     func_done
 }
 
+install_vivaldi() {
+    func_begin "Installing Vivaldi Browser"
+
+    pushd ~
+    wget https://downloads.vivaldi.com/stable/vivaldi-stable_7.5.3735.62-1_amd64.deb
+    sudo apt install ./vivaldi-stable_7.5.3735.62-1_amd64.deb -y
+    rm vivaldi-stable_7.5.3735.62-1_amd64.deb
+    popd
+    func_done
+}
+
+install_bob() {
+    func_begin "Installing Bob"
+
+    # Ask the user if they want to install Bob
+    read -p "Do you want to install Bob? (y/n): " install_bob_choice
+    if [[ "$install_bob_choice" != "y" && "$install_bob_choice" != "Y" ]]; then
+        echo "Skipping Bob installation."
+        return
+    fi
+
+    # Install build tools where they get mounted to the container
+    pushd ~/dev/local-tools
+    git clone git@github.com:Stefantb/build_tools.git
+    git clone git@gitlab.com:TernDev/sandbox/stefanb/builders.git
+
+    pushd build_tools
+    stow -v -t ~/ bash_extensions/
+
+    pushd bob_tool
+    pipx install --editable .
+    popd
+
+    pushd header_tool
+    pipx install --editable .
+    popd
+
+    pushd sort_includes_tool
+    pipx install --editable .
+    popd
+
+    popd # build_tools
+    popd # local-tools
+
+    pushd ~/dotfiles
+    stow -v bob
+
+    func_done
+}
+
 install_basic_packages
 install_dotfiles
 install_bash_dotfiles
@@ -341,4 +392,8 @@ install_docker
 install_uv_and_pipx
 install_vpn
 install_notes
+install_vivaldi
+install_bob
 
+echo "All installations are complete!"
+echo "Change hostname by running: sudo hostnamectl set-hostname <new-hostname>"
