@@ -16,7 +16,7 @@
     chmod 700 ~/.ssh
     chmod 600 ~/.ssh/*
     ```
-## Pop!_OS 22.04 awesom wallpaper
+## Pop!_OS 22.04 awesome wallpaper
     To set the background in gnome settings, remember that awesome will use the setting for the Light theme.
 
 
