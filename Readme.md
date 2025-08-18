@@ -5,7 +5,6 @@
 
 2. Run the script to setup the system.
     ``` bash
-    # E.G.
     wget -qO- https://raw.githubusercontent.com/Stefantb/setup-machine/refs/heads/main/setup-pop-22.sh | bash
     ```
 
