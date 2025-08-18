@@ -2,7 +2,46 @@
 
 # Sets up on a new machine with Pop!_OS 22.04
 
+#******************************************************************************
+#
+#******************************************************************************
+print_banner()
+{
+    echo ""
+    echo "################################################################"
+    echo "##"
+    echo "##  $1"
+    echo "##"
+    echo "################################################################"
+}
+
+print_small_banner()
+{
+    echo ""
+    echo "########################################################"
+    echo "#  $1"
+    echo "########################################################"
+}
+
+func_begin()
+{
+    print_small_banner "$1"
+    set -x
+}
+
+func_done()
+{
+    set +x
+    echo "Done"
+    echo ""
+}
+
+#******************************************************************************
+#
+#******************************************************************************
 install_basic_packages() {
+    func_begin "Installing basic packages"
+
     sudo apt-get update
     sudo apt-get install -y \
         git \
@@ -24,17 +63,21 @@ install_basic_packages() {
         direnv \
         xsel \
         xclip
+
+    func_done
 }
 
 install_starship() {
-    # Install starship
+    func_begin "Installing Starship"
+
     curl -sS https://starship.rs/install.sh | sh
 
     pushd ~/dotfiles
     stow -v starship
+    func_done
 }
 
-install_bash_dotfiles() {
+backup_bash_files() {
     # Install bash dotfiles
     pushd ~
     if [[ -f .bashrc ]]; then
@@ -53,53 +96,58 @@ install_bash_dotfiles() {
         echo "Backing up existing .bash_logout"
         mv .bash_logout .bash_logout.bak
     fi
-
-    pushd ~/dotfiles
-    stow -v bash
 }
 
 
 install_dotfiles() {
-    # Clone the dotfiles repository
+    func_begin "Installing dotfiles"
+
     pushd ~
     git clone --recurse-submodules -j8 git@github.com:Stefantb/dotfiles.git
 
-    # Maks sure to create some directories to prevent stow from taking ownership
+    # Creating directories prevents stow from taking ownership, and thus clashes.
     mkdir -p .local/bin
 
     pushd dotfiles
     # Use stow to symlink the dotfiles
     stow -v kitty
     stow -v ranger
-    stow -v git
     sudo stow -v -t / system_commands
-    popd
 
-    install_bash_dotfiles
+    backup_bash_files
+    stow -v bash
+    func_done
 }
 
 
-setup_notes() {
+install_notes() {
+    func_begin "Installing notes and git sync"
+
     pushd ~/dev/
     git clone git@github.com:Stefantb/notes.git
 
     pushd ~/dotfiles
     ./setup-notes-git-sync.sh
+    func_done
 }
 
 
 install_fzf() {
-    # Install fzf
+    func_begin "Installing fzf"
+
     pushd ~
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
     ~/.fzf/install --all
     mkdir -p dev/local-tools/
     pushd dev/local-tools
     git clone https://github.com/urbainvaes/fzf-marks.git
+    func_done
 }
 
 
-setup_neovim() {
+install_neovim() {
+    func_begin "Installing Neovim"
+
     pushd ~
     mkdir -p dev/local-tools
 
@@ -123,7 +171,6 @@ setup_neovim() {
     pip install pynvim
     popd # .virtualenvs
 
-    install_fzf
 
     # Install nvm and node 18.18.2
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
@@ -137,9 +184,12 @@ setup_neovim() {
 
     pushd ~/dotfiles
     stow -v neovim-lua
+    func_done
 }
 
 install_albert() {
+    func_begin "Installing Albert"
+
     # Install albert
     echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_22.04/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
     curl -fsSL https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_22.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_manuelschneid3r.gpg > /dev/null
@@ -148,10 +198,13 @@ install_albert() {
 
     pushd ~/dotfiles
     stow -v albert
+    func_done
 }
 
 
 install_smartgit() {
+    func_begin "Installing SmartGit"
+
     pushd ~
     mkdir -p Programs/smartgit
     pushd Programs/smartgit
@@ -163,9 +216,11 @@ install_smartgit() {
 
     pushd ${filename}/smartgit/bin
     ./add-menuitem.sh
+    func_done
 }
 
 install_awesome() {
+    func_begin "Installing Awesome WM"
 
     sudo apt-get install -y awesome build-essential gnome-flashback
 
@@ -177,15 +232,21 @@ install_awesome() {
 
     gsettings set org.gnome.gnome-flashback desktop false
     gsettings set org.gnome.gnome-flashback root-background true
+    func_done
 }
 
 install_kvm() {
+    func_begin "Installing KVM and libvirt"
+
     sudo apt-get install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
     # sudo adduser $USER libvirt
     # sudo adduser $USER kvm
+    func_done
 }
 
 install_docker() {
+    func_begin "Installing Docker"
+
     # Add Docker's official GPG key:
     sudo apt-get update
     sudo apt-get install ca-certificates curl
@@ -218,34 +279,47 @@ install_docker() {
 }
 EOF
     sudo service docker restart
+    func_done
 }
 
 install_uv_and_pipx() {
+    func_begin "Installing uv and pipx"
+
     # Install luarocks and luarocks-magickwand
     curl -LsSf https://astral.sh/uv/install.sh | sh
     sudo apt-get install -y pipx
+    func_done
 }
 
 install_vpn() {
+    func_begin "Installing OpenConnect VPN"
     sudo apt-get install -y network-manager-openconnect \
         network-manager-openconnect-gnome \
         openconnect
+    func_done
 }
 
 setup_git() {
+    func_begin "Setting up git"
+    pushd ~/dotfiles
+    stow -v git
+    git config --global user.name "Stefan Thor Bjarnason"
+    git config --global user.email stefanb@tern.is
     git config --global alias.hop '!f() { git rev-parse --verify "$*" && git checkout "HEAD^{}" && git reset --soft "$*" && git checkout "$*"; }; f'
+    func_done
 }
 
 install_basic_packages
 install_dotfiles
 install_bash_dotfiles
 install_starship
-setup_neovim
+install_fzf
+install_neovim
 install_albert
 install_smartgit
 install_awesome
 install_docker
 install_uv_and_pipx
 install_vpn
-setup_notes
+install_notes
 
