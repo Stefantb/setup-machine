@@ -342,7 +342,6 @@ install_vivaldi() {
 install_bob() {
     func_begin "Installing Bob"
 
-
     # Install build tools where they get mounted to the container
     pushd ~/dev/local-tools
     git clone git@github.com:Stefantb/build_tools.git
@@ -387,12 +386,7 @@ install_uv_and_pipx
 install_vpn
 install_notes
 install_vivaldi
-
-# Ask the user if they want to install Bob
-read -p "Do you want to install Bob? (y/n): " install_bob_choice
-if [[ "$install_bob_choice" == "y" || "$install_bob_choice" == "Y" ]]; then
-    install_bob
-fi
+install_bob
 
 echo "All installations are complete!"
 echo "Change hostname by running: sudo hostnamectl set-hostname <new-hostname>"
