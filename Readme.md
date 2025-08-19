@@ -11,13 +11,14 @@
 
 # Notes
 
-* Once had to fix permissions on the .ssh directory
+* Once had to fix permissions on the .ssh directory: 
 
     ``` bash
     chmod 700 ~/.ssh
     chmod 600 ~/.ssh/*
     ```
-* Pop!_OS 22.04 awesome wallpaper
+* Pop!_OS 22.04 awesome wallpaper:
+
     To set the background in gnome settings, remember that awesome will use the setting for the Light theme.
 
 
