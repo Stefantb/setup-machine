@@ -342,7 +342,6 @@ install_vivaldi() {
 install_bob() {
     func_begin "Installing Bob"
 
-    # Install build tools where they get mounted to the container
     pushd ~/dev/local-tools
     git clone git@github.com:Stefantb/build_tools.git
     git clone git@gitlab.com:TernDev/sandbox/stefanb/builders.git
