@@ -371,6 +371,24 @@ install_bob() {
     func_done
 }
 
+install_tern_antivirus() {
+    func_begin "Installing Tern Antivirus"
+
+    mkdir -p ~/Programs/tern-antivirus
+
+    pushd ~/Programs/tern-antivirus
+    wget https://kim.tern.is/safn/Downloads/AV/TERN_Linux_Syndis_SOC_Cortex_8_7_0_131661_deb.tar.gz
+    tar -xf TERN_Linux_Syndis_SOC_Cortex_8_7_0_131661_deb.tar.gz
+    sudo mkdir -p /etc/panw
+    sudo cp ./cortex.conf /etc/panw/
+    sudo apt-get install -y selinux-policy-dev
+    sudo dpkg -i ./cortex-8.7.0.131661.deb
+    popd # ~/Programs/tern-antivirus
+
+    # Note: the service name is traps_pmd
+    func_done
+}
+
 install_basic_packages
 install_dotfiles
 install_bash_dotfiles
@@ -387,6 +405,7 @@ install_vpn
 install_notes
 install_vivaldi
 install_bob
+install_tern_antivirus
 
 echo "All installations are complete!"
 echo "Change hostname by running: sudo hostnamectl set-hostname <new-hostname>"
