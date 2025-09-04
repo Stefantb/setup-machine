@@ -21,5 +21,10 @@
 
     To set the background in gnome settings, remember that awesome will use the setting for the Light theme.
 
+___
+# Home variant
 
+``` bash
+wget -qO- https://raw.githubusercontent.com/Stefantb/setup-machine/refs/heads/main/setup-pop-22-home.sh | bash | tee setup-pop-22.log
+```
 
