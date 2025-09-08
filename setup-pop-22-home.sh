@@ -172,9 +172,10 @@ install_neovim() {
     sudo apt-get install -y ninja-build gettext cmake unzip curl build-essential
     make CMAKE_BUILD_TYPE=RelWithDebInfo
     sudo make install
-    popd # neovim
 
-    popd # local-tools
+    # clear pushed dirs
+    pushd ~
+    dirs -c
 
     mkdir .virtualenvs
     pushd .virtualenvs
@@ -404,6 +405,7 @@ install_vpn
 install_notes
 install_vivaldi
 install_bob
+setup_git
 # install_tern_antivirus
 
 echo "All installations are complete!"
