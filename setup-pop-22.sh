@@ -62,6 +62,7 @@ install_basic_packages() {
         picom \
         direnv \
         xsel \
+        entr \
         xclip
 
     func_done
