@@ -171,6 +171,9 @@ install_nerdfonts() {
 install_neovim() {
     func_begin "Installing Neovim"
 
+    sudo apt install -y cargo libclang-dev
+    cargo install --locked tree-sitter-cli
+
     mkdir -p ~/dev/local-tools
 
     pushd ~/dev/local-tools

@@ -27,4 +27,19 @@ ___
 ``` bash
 wget -qO- https://raw.githubusercontent.com/Stefantb/setup-machine/refs/heads/main/setup-pop-22-home.sh | bash | tee setup-pop-22.log
 ```
+sudo apt install spice-vdagent
+
+
+```bash
+
+flatpak install -y flathub com.bitwarden.desktop
+
+#******************************************************************************
+# bitwarden ssh agent
+#******************************************************************************
+export SSH_AUTH_SOCK=$HOME/.var/app/com.bitwarden.desktop/data/.bitwarden-ssh-agent.sock
+
+```
+
+
 
