@@ -62,7 +62,9 @@ install_basic_packages() {
         picom \
         direnv \
         xsel \
-        xclip
+        xclip \
+        btop \
+        plocate
 
     func_done
 }
@@ -197,14 +199,14 @@ install_neovim() {
     pip install pynvim
     popd # .virtualenvs
 
-    # Install nvm and node 18.18.2
+    # Install nvm and node 25.6.0
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 
     NVM_DIR="$HOME/.nvm"
     source "$NVM_DIR/nvm.sh"
 
-    nvm install 18.18.2
-    nvm use 18.18.2
+    nvm install 25.6.0
+    nvm use 25.6.0
     npm install -g neovim
 
     pushd ~/dotfiles
@@ -216,8 +218,8 @@ install_albert() {
     func_begin "Installing Albert"
 
     # Install albert
-    echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_22.04/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
-    curl -fsSL https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_22.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_manuelschneid3r.gpg > /dev/null
+    echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_24.04/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
+    curl -fsSL https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_24.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_manuelschneid3r.gpg > /dev/null
     sudo apt-get update
     sudo apt-get install -y albert
 
@@ -248,11 +250,16 @@ install_smartgit() {
 install_awesome() {
     func_begin "Installing Awesome WM"
 
-    sudo apt-get install -y awesome build-essential gnome-flashback
+    sudo apt-get install -y \
+        awesome \
+        build-essential \
+        libnotify-bin \
+        gnome-flashback \
+        gnome-session-flashback
 
     mkdir -p ~/dev/local-tools/
     pushd ~/dev/local-tools/
-    git clone git@github.com:Stefantb/awesome-gnome.git
+    git clone -b ubuntu_24_04 git@github.com:Stefantb/awesome-gnome.git
     pushd awesome-gnome
     sudo make install
     popd # awesome-gnome
@@ -349,6 +356,11 @@ install_vivaldi() {
     sudo apt install ./${vivaldi_version} -y
     rm ${vivaldi_version}
     popd
+
+    for size in {16,24,32,48,64,128,256}; do
+      /usr/bin/xdg-icon-resource install --size "${size}" "/opt/vivaldi/product_logo_${size}.png" --novendor "vivaldi"
+    done
+
     func_done
 }
 
