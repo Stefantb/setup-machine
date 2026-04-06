@@ -397,6 +397,9 @@ install_bob() {
 
 install_basic_packages
 install_bitwarden
+export SSH_AUTH_SOCK=$HOME/.var/app/com.bitwarden.desktop/data/.bitwarden-ssh-agent.sock
+read -rsn1 -p "Start Bitwarden and press any key to continue..."
+
 install_dotfiles
 install_bash_dotfiles
 install_starship
