@@ -255,7 +255,8 @@ install_awesome() {
         build-essential \
         libnotify-bin \
         gnome-flashback \
-        gnome-session-flashback
+        gnome-session-flashback \
+        gdm3
 
     mkdir -p ~/dev/local-tools/
     pushd ~/dev/local-tools/
