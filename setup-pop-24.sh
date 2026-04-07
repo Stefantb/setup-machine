@@ -155,10 +155,9 @@ install_fzf() {
     ~/.fzf/install --all
     popd
 
-    mkdir -p dev/local-tools/
-    pushd dev/local-tools
-    git clone https://github.com/urbainvaes/fzf-marks.git
-    popd
+    mkdir -p ~/dev/local-tools/
+    git clone https://github.com/urbainvaes/fzf-marks.git ~/dev/local-tools/fzf-marks
+
     func_done
 }
 
