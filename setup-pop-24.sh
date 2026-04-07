@@ -280,6 +280,7 @@ install_kvm() {
     sudo apt-get install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
     # sudo adduser $USER libvirt
     # sudo adduser $USER kvm
+    sudo usermod -a -G libvirt $USER
     func_done
 }
 
