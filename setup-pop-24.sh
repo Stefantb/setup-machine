@@ -74,6 +74,16 @@ install_bitwarden() {
 
     flatpak install -y flathub com.bitwarden.desktop
 
+    mkdir -p ~/.config/autostart
+    cat <<EOF > ~/.config/autostart/bitwarden.desktop
+[Desktop Entry]
+Type=Application
+Name=Bitwarden
+Comment=Bitwarden password manager
+Exec=flatpak run com.bitwarden.desktop
+X-GNOME-Autostart-enabled=true
+EOF
+
     func_done
 }
 
@@ -270,6 +280,13 @@ install_awesome() {
 
     gsettings set org.gnome.gnome-flashback desktop false
     gsettings set org.gnome.gnome-flashback root-background true
+
+    # Ayatana's indicator-application owns the StatusNotifierWatcher but rejects
+    # pixmap-only tray icons (Electron apps like Bitwarden) and refuses panel
+    # hosts. Use gnome-flashback's own watcher instead.
+    systemctl --user mask indicator-application.service
+    gsettings set org.gnome.gnome-flashback status-notifier-watcher true
+    echo "Add the 'Status Notifier Host' applet to the panel (Alt+right-click > Add to Panel) to see tray icons."
     func_done
 }
 
